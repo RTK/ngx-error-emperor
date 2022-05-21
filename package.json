@@ -31,7 +31,7 @@
         "@angular/compiler-cli": "~13.3.9",
         "@commitlint/cli": "^17.0.0",
         "@commitlint/config-conventional": "^17.0.0",
-        "@rtk/prettier-config": "github:RTK/prettier-config",
+        "@rtk/prettier-config": "^1.0.0",
         "@types/jest": "^27.5.1",
         "@types/node": "^12.11.1",
         "husky": "^8.0.0",
