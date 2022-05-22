@@ -14,12 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `AssignedError` class
     -   `ErrorContext` class
     -   `ErrorContextToken` class
+    -   `FormError` class
+    -   `Form` component
     -   `assignError` function
-    -   `ERROR_HANDLER` token
-    -   `ERROR_INTERCEPTORS` token
     -   `DefaultErrorHandler` service
     -   `GlobalErrorHandler` service
     -   `UnwrapPromiseRejectionErrorInterceptor` service
+    -   `ERROR_HANDLER` token
+    -   `ERROR_INTERCEPTORS` token
+    -   `FORM_CONTAINER` token
     -   `ErrorEmperorModuleOptions` type
     -   `ErrorInterceptor` type
+    -   `FormContainer` type
 -   Readme

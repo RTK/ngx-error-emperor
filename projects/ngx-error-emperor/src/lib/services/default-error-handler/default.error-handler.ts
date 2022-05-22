@@ -1,7 +1,7 @@
 import {ErrorHandler, Inject, Injectable} from '@angular/core';
 
 import {AssignedError} from '../../classes/assigned-error/assigned-error.class';
-import {CONSOLE} from '../../injection-tokens/console-injection-token.value';
+import {CONSOLE} from '../../injection-tokens/console.injection-token';
 
 @Injectable()
 export class DefaultErrorHandler implements ErrorHandler {

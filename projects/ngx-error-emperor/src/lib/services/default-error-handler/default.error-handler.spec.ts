@@ -4,7 +4,7 @@ import {DefaultErrorHandler} from './default.error-handler';
 
 import {AssignedError} from '../../classes/assigned-error/assigned-error.class';
 import {ErrorContext} from '../../classes/error-context/error-context.class';
-import {CONSOLE} from '../../injection-tokens/console-injection-token.value';
+import {CONSOLE} from '../../injection-tokens/console.injection-token';
 
 describe('DefaultErrorHandler', (): void => {
     let service: DefaultErrorHandler;

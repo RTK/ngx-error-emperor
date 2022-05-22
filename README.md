@@ -196,3 +196,7 @@ Any error, that arises from the `getAll` method, will be thrown as an `AssignedE
 `myContextToken` object. In any `ErrorInterceptor` this `AssignedError` can now be identified via the `myContextToken` to be an error that
 originates from the `ApiServiceA.getAll()` method, so it may be transformed into a generic error with which your `ErrorHandler` class can work
 with to take adequate measurements.
+
+### Form component
+
+- TODO
