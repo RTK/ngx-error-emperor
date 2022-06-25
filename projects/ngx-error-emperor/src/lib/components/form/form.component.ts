@@ -30,12 +30,12 @@ export class FormComponent {
         return this._error !== noError;
     }
 
-    public get error(): unknown | symbol {
-        return this._error;
+    public get error(): unknown | null {
+        return this._error === noError ? null : this._error;
     }
 
     protected get relevantFormGroup(): FormGroup | undefined {
-        return this.formGroup ?? this.formGroupParent;
+        return this.formGroup ?? this.formGroupParent ?? void 0;
     }
 
     private _error: unknown = noError;
@@ -72,8 +72,7 @@ export class FormComponent {
     }
 
     private handleError(error: unknown): void {
-        const resolvedError: unknown =
-            this.errorResolver.resolveError(error);
+        const resolvedError: unknown = this.errorResolver.resolveError(error);
 
         if (this.relevantFormGroup && resolvedError instanceof FormError) {
             if ('controlErrors' in resolvedError) {

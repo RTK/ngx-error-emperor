@@ -1,5 +1,10 @@
 import {ErrorContextToken} from '../error-context-token/error-context-token.class';
 
+/**
+ * Provides context for errors.
+ *
+ * Provides the same functionalities as Angular HttpContext class.
+ */
 export class ErrorContext {
     private readonly errorContextTokenMap: Map<
         ErrorContextToken<unknown>,

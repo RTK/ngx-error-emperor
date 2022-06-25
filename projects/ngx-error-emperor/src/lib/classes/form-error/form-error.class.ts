@@ -2,6 +2,9 @@ import type {ValidationErrors} from '@angular/forms';
 
 import type {FormErrorOptions} from '../../types/form-error-options.type';
 
+/**
+ * Special error to be handled in ngx-ee-form components.
+ */
 export class FormError extends Error {
     public get controlErrors():
         | Record<string, ValidationErrors | null>

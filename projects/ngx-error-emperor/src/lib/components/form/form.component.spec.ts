@@ -109,7 +109,7 @@ describe('FormComponent', (): void => {
 
             subject.complete();
 
-            expect(component.error).toBe(noError);
+            expect(component.error).toBe(null);
             expect(component.hasError).toBe(false);
         }));
 

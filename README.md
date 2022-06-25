@@ -46,13 +46,10 @@ import {NgxErrorEmperorModule} from '@rtk/ngx-error-emperor';
 
 @NgModule({
     imports: [
-        ...,
-        NgxErrorEmperor.forRoot(),
-        ...
+        NgxErrorEmperor.forRoot()
     ]
 })
 class AppModule {
-...
 }
 ```
 
@@ -72,7 +69,6 @@ If you wish to disable them, you can turn them off via the configuration object.
     ]
 })
 class AppModule {
-...
 }
 ```
 
