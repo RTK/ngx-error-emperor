@@ -1,31 +1,23 @@
-import {ErrorHandler, Inject, Injectable, Optional} from '@angular/core';
+import {ErrorHandler, Inject, Injectable} from '@angular/core';
 
-import type {ErrorInterceptor} from '../../types/error-interceptor.type';
-import {ERROR_INTERCEPTORS} from '../../injection-tokens/error-interceptors.injection-token';
+import {ErrorResolver} from '../error-resolver/error.resolver';
+
 import {ERROR_HANDLER} from '../../injection-tokens/error-handler.injection-token';
 
+/**
+ * Global error handler class that will be registered as ERROR_HANDLER via angular.
+ *
+ * Redirects the error handling to the registered [ErrorHandler] instance.
+ */
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
     public constructor(
         @Inject(ERROR_HANDLER)
-        @Optional()
         private readonly errorHandler: ErrorHandler,
-        @Inject(ERROR_INTERCEPTORS)
-        @Optional()
-        private readonly errorInterceptorsList:
-            | readonly ErrorInterceptor[]
-            | undefined
+        private readonly errorResolver: ErrorResolver
     ) {}
 
     public handleError(error: unknown): void {
-        let modifiedError: unknown = error;
-
-        if (Array.isArray(this.errorInterceptorsList)) {
-            for (const errorInterceptor of this.errorInterceptorsList) {
-                modifiedError = errorInterceptor.handle(modifiedError);
-            }
-        }
-
-        this.errorHandler.handleError(modifiedError);
+        this.errorHandler.handleError(this.errorResolver.resolveError(error));
     }
 }

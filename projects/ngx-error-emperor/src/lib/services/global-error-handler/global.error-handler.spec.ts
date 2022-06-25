@@ -11,7 +11,7 @@ import {ERROR_INTERCEPTORS} from '../../injection-tokens/error-interceptors.inje
 import type {ErrorInterceptor} from '../../types/error-interceptor.type';
 
 describe('GlobalErrorHandler', (): void => {
-    let service: GlobalErrorHandler;
+    let globalErrorHandler: GlobalErrorHandler;
 
     let errorHandler: ErrorHandler;
     let errorInterceptorList: readonly ErrorInterceptor[];
@@ -63,11 +63,11 @@ describe('GlobalErrorHandler', (): void => {
     });
 
     beforeEach((): void => {
-        service = TestBed.inject(GlobalErrorHandler);
+        globalErrorHandler = TestBed.inject(GlobalErrorHandler);
     });
 
     it('should be created', (): void => {
-        expect(service).toBeTruthy();
+        expect(globalErrorHandler).toBeTruthy();
     });
 
     describe('handleError()', (): void => {
@@ -100,7 +100,7 @@ describe('GlobalErrorHandler', (): void => {
                 }
             );
 
-            service.handleError(assignedError);
+            globalErrorHandler.handleError(assignedError);
             expect(errorHandler.handleError).toHaveBeenCalledWith(
                 new CustomError(originalError)
             );

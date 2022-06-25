@@ -1,0 +1,31 @@
+<ngx-ee-form #eeForm [formGroup]="form">
+    <div *ngIf="eeForm.hasError">
+        <p>{{ eeForm.error }}</p>
+    </div>
+
+    <div>
+        <label>Firstname</label>
+        <input formControlName="firstname" type="text" />
+        <p [hidden]="form.controls.firstname.valid">
+            Please enter a valid firstname
+        </p>
+    </div>
+
+    <div>
+        <label>Lastname</label>
+        <input formControlName="lastname" type="text" />
+        <p [hidden]="form.controls.lastname.valid">
+            Please enter a valid lastname
+        </p>
+    </div>
+
+    <div>
+        <label>E-Mail</label>
+        <input formControlName="email" type="email" />
+        <p [hidden]="form.controls.email.valid">Please enter a valid email</p>
+    </div>
+
+    <div>
+        <button type="submit" [disabled]="form.invalid">Submit</button>
+    </div>
+</ngx-ee-form>

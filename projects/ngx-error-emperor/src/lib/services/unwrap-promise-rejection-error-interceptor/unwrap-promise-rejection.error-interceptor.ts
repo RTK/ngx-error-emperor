@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 
-import {ErrorInterceptor} from '../../types/error-interceptor.type';
+import type {ErrorInterceptor} from '../../types/error-interceptor.type';
 
 /**
  * Unwraps unhandled promise rejections.

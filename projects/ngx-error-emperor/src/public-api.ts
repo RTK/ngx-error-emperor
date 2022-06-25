@@ -16,6 +16,8 @@ export * from './lib/injection-tokens/error-handler.injection-token';
 export * from './lib/injection-tokens/error-interceptors.injection-token';
 export * from './lib/injection-tokens/form-container.injection-token';
 
+export * from './lib/services/error-resolver/error.resolver';
+
 export * from './lib/values/no-error.value';
 
 export * from './lib/ngx-error-emperor.module';

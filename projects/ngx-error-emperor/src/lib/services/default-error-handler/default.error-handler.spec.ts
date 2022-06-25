@@ -7,7 +7,7 @@ import {ErrorContext} from '../../classes/error-context/error-context.class';
 import {CONSOLE} from '../../injection-tokens/console.injection-token';
 
 describe('DefaultErrorHandler', (): void => {
-    let service: DefaultErrorHandler;
+    let defaultErrorHandler: DefaultErrorHandler;
 
     let console: Console;
 
@@ -30,18 +30,18 @@ describe('DefaultErrorHandler', (): void => {
     });
 
     beforeEach((): void => {
-        service = TestBed.inject(DefaultErrorHandler);
+        defaultErrorHandler = TestBed.inject(DefaultErrorHandler);
     });
 
     it('should be created', (): void => {
-        expect(service).toBeTruthy();
+        expect(defaultErrorHandler).toBeTruthy();
     });
 
     describe('handleError()', (): void => {
         it('should log directly to console error output when the error is not an assigned error', (): void => {
             const error: Error = new Error('test');
 
-            service.handleError(error);
+            defaultErrorHandler.handleError(error);
             expect(console.error).toHaveBeenCalledWith(error);
         });
 
@@ -54,7 +54,7 @@ describe('DefaultErrorHandler', (): void => {
                 errorContext
             );
 
-            service.handleError(assignedError);
+            defaultErrorHandler.handleError(assignedError);
             expect(console.error).toHaveBeenCalledWith(error);
         });
     });

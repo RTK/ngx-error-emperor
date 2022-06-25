@@ -1,6 +1,6 @@
 import {ErrorContextToken} from '@rtk/ngx-error-emperor';
 
-export const HttpErrorContextToken: ErrorContextToken<boolean> =
+export const formsErrorContextToken: ErrorContextToken<boolean> =
     new ErrorContextToken((): false => {
         return false;
     });

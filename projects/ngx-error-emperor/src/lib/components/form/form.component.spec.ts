@@ -13,16 +13,15 @@ import {FormComponent} from './form.component';
 
 import {FormError} from '../../classes/form-error/form-error.class';
 import {FORM_CONTAINER} from '../../injection-tokens/form-container.injection-token';
-import {ERROR_INTERCEPTORS} from '../../injection-tokens/error-interceptors.injection-token';
 import type {FormContainer} from '../../types/form-container.type';
-import type {ErrorInterceptor} from '../../types/error-interceptor.type';
 import {noError} from '../../values/no-error.value';
+import {ErrorResolver} from '../../services/error-resolver/error.resolver';
 
 describe('FormComponent', (): void => {
     let component: FormComponent;
     let fixture: ComponentFixture<FormComponent>;
 
-    let errorInterceptorList: readonly ErrorInterceptor[];
+    let errorResolverService: ErrorResolver;
     let formContainer: FormContainer;
     let formGroup: FormGroup;
 
@@ -31,24 +30,10 @@ describe('FormComponent', (): void => {
             declarations: [FormComponent],
             providers: [
                 {
-                    provide: ERROR_INTERCEPTORS,
-                    useValue: [
-                        {
-                            handle: jest.fn((error: unknown): unknown => {
-                                return error;
-                            })
-                        } as ErrorInterceptor,
-                        {
-                            handle: jest.fn((error: unknown): unknown => {
-                                return error;
-                            })
-                        } as ErrorInterceptor,
-                        {
-                            handle: jest.fn((error: unknown): unknown => {
-                                return error;
-                            })
-                        } as ErrorInterceptor
-                    ]
+                    provide: ErrorResolver,
+                    useValue: {
+                        resolveError: jest.fn()
+                    }
                 },
                 {
                     provide: FORM_CONTAINER,
@@ -69,7 +54,7 @@ describe('FormComponent', (): void => {
     });
 
     beforeEach((): void => {
-        errorInterceptorList = TestBed.inject(ERROR_INTERCEPTORS);
+        errorResolverService = TestBed.inject(ErrorResolver);
         formContainer = TestBed.inject(FORM_CONTAINER);
         formGroup = TestBed.inject(FormGroup);
     });
@@ -94,7 +79,7 @@ describe('FormComponent', (): void => {
 
             expect(event.cancelBubble).toBe(false);
 
-            component.onSubmit(event);
+            component.submit(event);
             expect(preventDefaultSpy).toHaveBeenCalledWith();
             expect(event.cancelBubble).toBe(true);
 
@@ -104,7 +89,7 @@ describe('FormComponent', (): void => {
             });
 
             const promiseSpy: jest.Mock = jest.fn();
-            component.onSubmit(event).then(promiseSpy);
+            component.submit(event).then(promiseSpy);
 
             expect(promiseSpy).not.toHaveBeenCalled();
             subject.next();
@@ -115,7 +100,7 @@ describe('FormComponent', (): void => {
             formContainer.submit = jest.fn((): Observable<void> => {
                 return subject.pipe(first());
             });
-            component.onSubmit(event).then(observableSpy);
+            component.submit(event).then(observableSpy);
 
             expect(observableSpy).not.toHaveBeenCalled();
             subject.next();
@@ -128,28 +113,7 @@ describe('FormComponent', (): void => {
             expect(component.hasError).toBe(false);
         }));
 
-        it('should run errors through all interceptors and assign it as the form error, if it is no FormError instance', async (): Promise<void> => {
-            const error: Error = new Error('test');
-
-            formContainer.submit = (): never => {
-                throw error;
-            };
-
-            await component.onSubmit(new CustomEvent('test'));
-
-            expect(component.hasError).toBe(true);
-            expect(component.error).toBe(error);
-            expect(errorInterceptorList[0].handle).toHaveBeenCalledWith(error);
-            expect(errorInterceptorList[1].handle).toHaveBeenCalledWith(error);
-            expect(errorInterceptorList[2].handle).toHaveBeenCalledWith(error);
-
-            expect(formGroup.errors).toBe(null);
-            expect(formGroup.controls.a.errors).toBe(null);
-            expect(formGroup.controls.b.errors).toBe(null);
-            expect(formGroup.controls.c.errors).toBe(null);
-        });
-
-        it('should run errors through all interceptors and set control errors and the general error if it is a FormError instance', async (): Promise<void> => {
+        it('should set control errors and the general error if it is a FormError instance', async (): Promise<void> => {
             const error: Error = new Error('test');
             const generalError: string = 'test';
             const controlErrors: Readonly<
@@ -165,18 +129,19 @@ describe('FormComponent', (): void => {
                 }
             };
 
-            errorInterceptorList[1].handle = (error: unknown): FormError => {
+            errorResolverService.resolveError = (): FormError => {
                 return new FormError({
                     originalError: error,
                     generalError,
                     controlErrors
                 });
             };
+
             formContainer.submit = (): never => {
                 throw error;
             };
 
-            await component.onSubmit(new CustomEvent('test'));
+            await component.submit(new CustomEvent('test'));
 
             expect(component.hasError).toBe(true);
             expect(component.error).toBe(generalError);
@@ -185,6 +150,22 @@ describe('FormComponent', (): void => {
             expect(formGroup.controls.a.errors).toBe(controlErrors.a);
             expect(formGroup.controls.b.errors).toBe(controlErrors.b);
             expect(formGroup.controls.c.errors).toBe(controlErrors.c);
+        });
+
+        it('should rethrow the error if it is no FormError', async (): Promise<void> => {
+            const error: Error = new Error('test');
+
+            errorResolverService.resolveError = (error: unknown): unknown => {
+                return error;
+            };
+
+            formContainer.submit = (): never => {
+                throw error;
+            };
+
+            await expect(
+                component.submit(new CustomEvent('test'))
+            ).rejects.toBe(error);
         });
     });
 });
