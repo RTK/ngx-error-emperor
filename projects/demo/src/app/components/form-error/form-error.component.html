@@ -1,0 +1,7 @@
+<p [hidden]="isHidden">
+    <span *ngIf="!error?.form">
+        <ng-content></ng-content>
+    </span>
+
+    <span *ngIf="error?.form"> {{ error?.form }}</span>
+</p>

@@ -17,6 +17,9 @@ import {ErrorResolver} from '../../services/error-resolver/error.resolver';
 import {FormContainer} from '../../types/form-container.type';
 import {noError} from '../../values/no-error.value';
 
+/**
+ * Component that catches errors and assigns them automatically for ReactiveForms.
+ */
 @Component({
     selector: 'ngx-ee-form',
     templateUrl: './form.component.html',
@@ -24,7 +27,9 @@ import {noError} from '../../values/no-error.value';
 })
 export class FormComponent {
     @Input()
-    public formGroup?: FormGroup;
+    public set formGroup(formGroup: FormGroup | null | undefined) {
+        this.inputFormGroup = formGroup;
+    }
 
     public get hasError(): boolean {
         return this._error !== noError;
@@ -35,10 +40,12 @@ export class FormComponent {
     }
 
     protected get relevantFormGroup(): FormGroup | undefined {
-        return this.formGroup ?? this.formGroupParent ?? void 0;
+        return this.inputFormGroup ?? this.formGroupParent ?? void 0;
     }
 
     private _error: unknown = noError;
+
+    private inputFormGroup?: FormGroup | null;
 
     public constructor(
         @Self() private readonly changeDetectorRef: ChangeDetectorRef,
@@ -88,7 +95,10 @@ export class FormComponent {
 
                 for (const [key, value] of entries) {
                     if (key in this.relevantFormGroup.controls) {
-                        this.relevantFormGroup.controls[key].setErrors(value);
+                        this.relevantFormGroup.controls[key].setErrors({
+                            ...this.relevantFormGroup.controls[key].errors,
+                            form: value
+                        });
                     }
                 }
             }

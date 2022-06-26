@@ -1,6 +1,6 @@
 # ngx-error-emperor
 
-Centralized Angular error handling with context.
+Angular error handling with context.
 
 ## Motivation
 
@@ -68,8 +68,7 @@ If you wish to disable them, you can turn them off via the configuration object.
         })
     ]
 })
-class AppModule {
-}
+class AppModule {}
 ```
 
 ### Install custom `HttpInterceptor` classes
@@ -195,4 +194,69 @@ with to take adequate measurements.
 
 ### Form component
 
-- TODO
+For easier form management with `ReactiveFormsModule`, a `FormComponent` can be used. The goal of the `FormComponent` is to catch
+errors that happen inside the form's context to provide feedback locally. Normally, a form consists of multiple inputs and each input can
+hold errors that will most likely be displayed right next to the input. The `FormComponent` aims to handle e.g., backend errors that hold information about
+which inputs exhibit errors.
+
+```ts
+import {FormControl, FormGroup} from '@angular/forms';
+
+import {FORM_CONTAINER} from '@rtk/ngx-error-emperor';
+
+@Component({
+    template: `
+        <ngx-ee-form #eeForm [formGroup]="myForm">
+            <p *ngIf="eeForm.hasError">{{ eeForm.error }}</p>
+
+            <input formControlName="firstname" placeholder="Firstname" />
+            <p *ngIf="myForm.controls.firstname.errors">
+                {{ myForm.controls.firstname.errors?.form }}
+            </p>
+
+            <button type="submit">Submit form</button>
+        </ngx-ee-form>
+    `,
+    viewProviders: [
+        {
+            provide: FORM_CONTAINER,
+            useExisting: MyFormComponent
+        }
+    ]
+})
+class MyFormComponent implements FormGroup {
+    public readonly myForm: FormGroup = new FormGroup({
+        firsntame: new FormControl(null)
+    });
+
+    public constructor(private readonly service: Service) {}
+
+    public async submit(): Promise<void> {
+        await service.doAction(this.myForm.value);
+    }
+}
+```
+
+```ts
+import {Injectable} from '@angular/core';
+
+import {FormError} from '@rtk/ngx-error-emperor';
+
+@Injectable()
+export class Service {
+    public async doAction(): Promise<void> {
+        throw new FormError({
+            originalError: new Error(
+                'This is the error that originally happened'
+            ),
+            controlErrors: {
+                firstname: 'Too long'
+            },
+            generalError: 'There was an error on your side!'
+        });
+    }
+}
+```
+
+If an error is thrown from inside the `submit` method, it will be analyzed. If it appears to be a `FormError`, each control error will be assigned automatically.
+The `FormComponent` also holds a reference to a general error, so that additional information can be provided to the user.

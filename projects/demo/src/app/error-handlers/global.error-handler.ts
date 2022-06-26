@@ -14,11 +14,9 @@ export class GlobalErrorHandler implements ErrorHandler {
         ) {
             window.alert(error.error);
         } else if (error instanceof AssignedError) {
-            console.error(error.error);
+            window.console.error(error.error);
         } else {
-            console.dir(error);
-            
-            console.error(error);
+            window.console.error(error);
         }
     }
 }
